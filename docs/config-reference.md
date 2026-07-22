@@ -12,6 +12,9 @@
 | `single-test`（模板） | code | 只跑一个测试文件/类，加速 TDD 内环 | 缺省则退回整体 `unit-test` |
 | `full-test` | code | **组边界回归**：每组 task 完成后跑的整模块/包单测（P0，防跨 task 回归） | 缺省回退 `unit-test` |
 | `coverage` | code / testing 规约 | 覆盖率工具 + 阈值 | 降级为"单测全绿 + 关键分支有测试"硬门，覆盖率作建议 |
+| `lint` | code | 组边界可选质量门：代码风格/静态检查（P1） | `none` → 跳过 |
+| `typecheck` | code | 组边界可选质量门：类型检查（P1；编译型语言可留 `none`，build 已含） | `none` → 跳过 |
+| `security-scan` | code | 组边界可选质量门：依赖/安全扫描（P1） | `none` → 跳过 |
 | `integration-test` | itest / dev | 跑集成/E2E 的命令 + 如何筛选这些用例 | **itest 阶段整段跳过**，内环绿即视为通过，直接 `/ls:archive` |
 | `integration-prereqs` | itest | 集成测试前置（API key / 在线服务 / 凭据） | itest 不做前置检查 |
 | `branch-prefixes` | clarify | 分支前缀集合 | 默认 `feat/bug/docs/opt` |

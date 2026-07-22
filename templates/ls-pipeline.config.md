@@ -24,6 +24,12 @@
 
 - **coverage**: `<工具 + 阈值，例如：jacoco / ≥80%；nyc / ≥80%；coverage.py / ≥80%；或 none>`
 
+## 质量门（可选，缺省 none 跳过；P1）
+
+- **lint**: `<代码风格/静态检查命令，或 none。例如：mvn spotless:check / pnpm lint / ruff check>`
+- **typecheck**: `<类型检查命令，或 none。例如：tsc --noEmit / mypy src；编译型语言可留 none（build 已含）>`
+- **security-scan**: `<依赖/安全扫描命令，或 none。例如：pnpm audit / pip-audit / mvn org.owasp:dependency-check-maven:check>`
+
 ## 集成 / 端到端测试（`/ls:itest` 外环）
 
 - **integration-test**: `<跑集成/E2E 的命令 + 如何筛选这些用例；例如：mvn -pl <cli-module> -am test "-Dtest=*IT" "-Dsurefire.failIfNoSpecifiedTests=false" / npm run test:e2e / pytest -m integration；若本项目没有独立集成层则填 none>`

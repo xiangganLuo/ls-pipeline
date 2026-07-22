@@ -7,7 +7,7 @@ tags: [workflow, ls-pipeline, code, tdd, loop-engine]
 
 编码⇄单测**内环**（loop engine）。`/ls:*` 流水线第 3 步（**自动阶段**）。复用 `/opsx:apply` 的 task 驱动语义，叠加 TDD 循环与构建校验。
 
-> **本命令的所有构建/测试命令都从 `ls-pipeline.config.md` 读取**（位置见 AGENTS.md/CLAUDE.md 指引，通常在项目根），而不是硬编码某个工具。开工前先读该配置，取出这些字段：`shell`、`build`（编译/类型检查）、`unit-test`（跑单测：整体命令 + 单测试文件/类模板）、`full-test`（组边界回归命令，可选，缺省回退 `unit-test`）、`coverage`（覆盖率工具+阈值，或 `none`）、`module-layout`（如何指定单个模块/包）。下文用 `<build>`/`<unit-test>`/`<single-test>`/`<full-test>`/`<coverage>` 代指配置里的对应命令。若 config 缺失，停下提示用户先按模板创建。
+> **本命令的所有构建/测试命令都从 `ls-pipeline.config.md` 读取**（位置见 AGENTS.md/CLAUDE.md 指引，通常在项目根），而不是硬编码某个工具。开工前先读该配置，取出这些字段：`shell`、`build`（编译/类型检查）、`unit-test`（跑单测：整体命令 + 单测试文件/类模板）、`full-test`（组边界回归命令，可选，缺省回退 `unit-test`）、`coverage`（覆盖率工具+阈值，或 `none`）、`lint`/`typecheck`/`security-scan`（可选质量门，缺省 `none` 跳过）、`module-layout`（如何指定单个模块/包）。下文用 `<build>`/`<unit-test>`/`<single-test>`/`<full-test>`/`<coverage>`/`<lint>`/`<typecheck>`/`<security-scan>` 代指配置里的对应命令。若 config 缺失，停下提示用户先按模板创建。
 
 **前置**：spec 已就绪并经人工批准（`/ls:spec`）。**Input**: 变更名（缺省从对话/分支推断）。
 
@@ -32,11 +32,12 @@ tags: [workflow, ls-pipeline, code, tdd, loop-engine]
      - 命令按 config 的 `shell` 语法书写；PowerShell 下 `-D`/带特殊字符的参数须加引号。
    - **REFACTOR**：绿了再清理，保持测试绿。
    - 通过后把该 task `- [ ]` → `- [x]`。
-   - 失败：修实现（非改测试，除非测试本身错）；同一 task 连续 3 次修不好 → 停下报告。
+   - 失败：修实现（非改测试，除非测试本身错）。同一 task **连续 3 次修不好**时不要死磕，按序尝试（P1）：(a) **拆分**该 task 为更小步逐个过；(b) 若发现是 **design 缺陷**（承重假设/接口不对）→ 回 `/ls:spec` 回改设计；(c) 仍无解 → 停下升级人工。"停下"是最后手段。
 
-4. **每组 task 后：回归 → 构建 → 逐组提交**（P0）
+4. **每组 task 后：回归 → 构建 → 质量门 → 逐组提交**（P0/P1）
    - **回归**（防止新 task 悄悄打破旧 task，别只跑本组新测试）：跑 config 的 `<full-test>`（缺省回退 `<unit-test>`，即受影响模块/包的整体单测）。有失败先修再继续。
    - **构建**：执行 config 的 `<build>`（编译/类型检查整个工程），成功才继续。
+   - **质量门（P1，可选）**：若 config 配置了 `<lint>` / `<typecheck>` / `<security-scan>`（缺省 `none` → 跳过），一并跑绿再提交；变更触及敏感面（auth/输入/文件/外部调用/加密）时按 `security.md` 过安全评审。
    - **逐组提交**（green 后立即，杜绝"漏提交测试文件 / 半成品跨分支"）：`git add <本组涉及的目录（须同时覆盖实现文件与测试文件）>` → 按 conventional-commit 提交（`feat:`/`fix:`…）。命令按 config 的 `shell` 语法书写；提交前自查 `git status` 无遗漏测试文件。
 
 5. **内环退出条件**

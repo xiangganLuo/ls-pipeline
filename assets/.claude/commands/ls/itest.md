@@ -16,6 +16,7 @@ tags: [workflow, ls-pipeline, integration-test, loop-engine]
 1. **确认有集成测试**
    - 该变更是否涉及需真实模型/外部服务验证的端到端行为（agent 流、工具执行、渠道、真实 API 等）？
    - config 的 `integration-test` 非 `none` 且本变更确有对应用例 → 跑；否则（纯离线变更 / `integration-test: none`）→ 跳过并说明，直接提示 `/ls:archive`。
+   - **据 `[IT]` 打标决定范围（P2）**：优先跑 `tasks.md` 中标 `[IT]` 的任务对应的集成测试；无 `[IT]` 标且 `integration-test: none` → 跳过。
    - 按 config 的 `integration-prereqs` 确认前置就绪（相关 API key/凭据/服务已配）；未就绪 → 停下告知，不空跑。
 
 2. **跑集成测试**（命令取自 config 的 `<itest>`，按 `shell` 语法书写；`-D`/特殊字符参数在 PowerShell 下加引号）

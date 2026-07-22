@@ -11,7 +11,7 @@
 
 - **流程规约**（`rules/common/ls-pipeline.md`）——与技术栈、与客户端都无关。
 - **工具链配置**（项目根 `ls-pipeline.config.md`）——栈相关的唯一落点；命令读配置而非硬编码 `mvn`/`npm`/`pytest`。
-- **客户端适配**（`clients/registry.md` + 安装器）——同一份中性 Markdown，装到各客户端期望的位置。
+- **客户端适配**（安装器 + 本 README「维护者参考」）——同一份中性 Markdown，装到各客户端期望的位置。
 
 ## 里面有什么（逐文件职责）
 
@@ -20,15 +20,14 @@
 ```
 ls-pipeline/
 ├── README.md            # 本文件：是什么 / 安装 / 用法 / 结构
-├── LICENSE              # MIT 许可
 ├── install.ps1          # 安装器（Windows/PowerShell，UTF-8 BOM）
 ├── install.sh           # 安装器（macOS/Linux/bash，LF 行尾）
 ├── .gitattributes       # 强制 .sh=LF、.ps1=CRLF，避免跨平台行尾坏 shebang
 ├── .gitignore
 ├── assets/.claude/      # ① 客户端无关的“中性内容”——真正被装进你项目的资产
 ├── templates/           # ② 安装时 seed/写入的模板（配置 + 入口文件）
-├── clients/             # ③ 客户端适配注册表
-└── docs/                # ④ 指南 / 配置参考 / 样例 / 实战复盘
+└── docs/                # ③ 指南 / 配置参考 / 样例 / 实战复盘
+（客户端映射与扩展说明并入本 README 末尾「维护者参考」节）
 ```
 
 ### ① `assets/.claude/` —— 被安装的资产（流水线本体）
@@ -81,11 +80,7 @@ ls-pipeline/
 
 > 入口文件用 `<!-- ls-pipeline:begin/end -->` 标记块**幂等写入**，重装只更新标记块，保留你 AGENTS.md/CLAUDE.md 的其余内容。
 
-### ③ `clients/registry.md` —— 客户端注册表
-
-单一事实来源：每个客户端（claude/codex/opencode/trae/qoder/grok）装到哪些目录、用哪种 profile、验证状态、以及**如何新增一个客户端**。安装器的映射表镜像自它。
-
-### ④ `docs/` —— 文档
+### ③ `docs/` —— 文档
 
 | 文件 | 职责 |
 |------|------|
@@ -129,9 +124,9 @@ ls-pipeline/
 | **grok** (xAI Grok) | `AGENTS.md` + bundle（grok 亦读 SKILL.md） | 走 AGENTS.md 指引 |
 | **qoder** (Qoder) | `AGENTS.md` + bundle | 走 AGENTS.md 指引 |
 
-**两种安装 profile**：`claude` 走原生目录（斜杠命令原生可用）；其余走 **`AGENTS.md` 通用 profile**——写项目根 `AGENTS.md`（各家都读的跨工具标准，内嵌流水线规则 + 指引"读 `.ai/ls-pipeline/commands/*.md` 并执行"）+ 中性 bundle。功能等价，只是命令由 AGENTS.md 驱动而非一定是原生斜杠命令。详见 [`clients/registry.md`](clients/registry.md)（含各家约定出处与诚实边界）。
+**两种安装 profile**：`claude` 走原生目录（斜杠命令原生可用）；其余走 **`AGENTS.md` 通用 profile**——写项目根 `AGENTS.md`（各家都读的跨工具标准，内嵌流水线规则 + 指引"读 `.ai/ls-pipeline/commands/*.md` 并执行"）+ 中性 bundle。功能等价，只是命令由 AGENTS.md 驱动而非一定是原生斜杠命令。详见末尾「维护者参考」（含各家约定出处与诚实边界）。
 
-> 诚实说明：仅 `claude` 在源项目实跑验证；`opencode`/`trae` 的原生目录依官方文档但未端到端跑测；`codex`/`grok`/`qoder` 以 AGENTS.md 通用 profile 落地（这几家都原生读 `AGENTS.md`，流水线可用）。后续可按 `clients/registry.md` 的「如何扩展」补装原生目录。
+> 诚实说明：仅 `claude` 在源项目实跑验证；`opencode`/`trae` 的原生目录依官方文档但未端到端跑测；`codex`/`grok`/`qoder` 以 AGENTS.md 通用 profile 落地（这几家都原生读 `AGENTS.md`，流水线可用）。后续可按末尾「维护者参考」的「如何新增一个客户端」补装原生目录。
 
 ## 前置
 
@@ -159,7 +154,7 @@ macOS / Linux / bash：
 
 脚本会：按所选客户端把资产放到对应位置、幂等写入 `AGENTS.md`/`CLAUDE.md` 的 `ls-pipeline` 标记块（保留你其余内容）、seed 项目根 `ls-pipeline.config.md`（不覆盖已填）、检测 openspec、打印后续步骤。
 
-**手动**：见 `clients/registry.md` 的映射表，把 `assets/.claude/` 内容与 `templates/` 入口按目标客户端约定放好即可。
+**手动**：见末尾「维护者参考」的映射表，把 `assets/.claude/` 内容与 `templates/` 入口按目标客户端约定放好即可。
 
 ## 用之前：填配置
 
@@ -182,9 +177,42 @@ macOS / Linux / bash：
 ## 设计要点
 
 - **复用而非重造**：`/ls:*` 只补胶水，spec/编码/归档委托 `/opsx:*` + openspec。
-- **三层解耦**：流程规约（栈/客户端无关）× 工具链配置（栈相关）× 客户端适配（注册表）。
+- **三层解耦**：流程规约（栈/客户端无关）× 工具链配置（栈相关）× 客户端适配（安装器映射）。
 - **两层 loop + 三人工门**：内环快（离线单测），外环慢（集成/真模型），失败回环至绿，连续 3 轮无进展升级人工。
-- **可扩展**：新增客户端 = `clients/registry.md` 加一行 + 安装器加一个映射分支。
+- **可扩展**：新增客户端 = 安装器加一个映射分支 + 更新 README「维护者参考」表（见下）。
+
+## 维护者参考：客户端映射与扩展
+
+> 面向想新增/调整客户端支持的维护者。**运行时真正生效的映射在安装脚本里**（`install.ps1` 的 `$Clients` 哈希表、`install.sh` 的 `case` 分支）；本节是它的说明 + 扩展指南。
+
+### 完整映射
+
+| 客户端 | profile | 入口文件 | 原生命令目录（bonus） | 原生规则目录（bonus） | 技能 | 验证状态 |
+|--------|---------|----------|----------------------|----------------------|------|----------|
+| `claude` | native | `CLAUDE.md` 指针 | `.claude/commands/{ls,opsx}`（保留子目录=命名空间） | `.claude/rules/common` | `.claude/skills/openspec-*` | 已验证（源项目在用） |
+| `opencode` | agents-md | `AGENTS.md` | `.opencode/command/`（扁平化 `ls-*.md`/`opsx-*.md`） | — | — | 依官方文档，未端到端跑测 |
+| `trae` | agents-md | `AGENTS.md` | — | `.trae/rules/`（额外复制规约） | — | 依官方文档，未端到端跑测 |
+| `codex` | agents-md | `AGENTS.md` | —（prompts 用户级且已弃用，走 AGENTS.md 驱动） | — | 可选（Codex skills，未自动装） | 尽力而为 |
+| `grok` | agents-md | `AGENTS.md` | —（grok 亦读 SKILL.md，可手动接 bundle 内 skills） | — | 可选 | 尽力而为 |
+| `qoder` | agents-md | `AGENTS.md` | —（CLI 命令目录未公开确认） | — | — | 尽力而为 |
+
+`profile`：`native`=装进客户端专属目录、斜杠命令原生可用（目前仅 claude）；`agents-md`=写项目根 `AGENTS.md`（跨工具标准）+ 中性 bundle `.ai/ls-pipeline/`，`/ls:*` 由 AGENTS.md 指引驱动，功能等价。所有 profile 都把配置放项目根 `ls-pipeline.config.md`。
+
+### 各客户端约定出处（供核对/更新，会随工具版本变化）
+
+- **Claude Code**：`.claude/commands`（子目录=命名空间）、`.claude/skills/*/SKILL.md`、`CLAUDE.md` / `.claude/rules`。
+- **OpenAI Codex**：`AGENTS.md`（根，向下合并，32KiB 上限）；自定义 prompts 在 `~/.codex/prompts`（用户级，已弃用，被 skills 取代）。
+- **opencode**：命令 `.opencode/command/<name>.md`；规则 `AGENTS.md`（优先于 CLAUDE.md）+ `opencode.json` 的 `instructions`。
+- **Trae IDE**：规则 `.trae/rules/*.md`（`#rulename` 引用）；兼容 `AGENTS.md` + `CLAUDE.md`。
+- **Qoder**：原生读 `AGENTS.md`（IDE 内另有 rules 设置）；Qoder CLI 支持 `.md` 自定义命令 + subagents。
+- **Grok（grok-cli / grok-build）**：层级 `AGENTS.md`（Codex 风格合并）+ `SKILL.md` 技能；兼容 `CLAUDE.md`。
+
+### 如何新增一个客户端
+
+1. 在 `install.ps1` 的 `$Clients` 与 `install.sh` 的 `case` 各加一个同名条目，填 `profile`（`native`/`agents-md`）与可选的 `CmdDir`/`CmdFlatten`/`RulesDir`。
+2. agents-md 客户端**通常无需改脚本逻辑**（默认即 AGENTS.md + 通用 bundle）；只有要"原生 bonus 目录"时才填 `CmdDir`/`RulesDir`。
+3. 更新上面「完整映射」表与「支持的客户端」表。
+4. 在真实项目跑一次安装 + `/ls:status` 冒烟，把验证状态从"尽力而为"升级。
 
 ## 许可
 

@@ -2,7 +2,7 @@
 .SYNOPSIS
   把 ls-pipeline（/ls:* 半自动 AI 循环开发流水线）安装进目标项目，适配所选 AI 编码客户端。
 .DESCRIPTION
-  两种 profile（见 clients/registry.md）：
+  两种 profile（详见 README「维护者参考」）：
     - native（claude）：装进 .claude/{commands,skills,rules}，写 CLAUDE.md 指针。
     - agents-md（其余）：写项目根 AGENTS.md（跨工具标准）+ 中性 bundle .ai/ls-pipeline/{commands,rules,skills,docs}；
       部分客户端另补装原生目录（opencode→.opencode/command，trae→.trae/rules）。
@@ -30,7 +30,7 @@ $assets = Join-Path $repo "assets\.claude"
 $docs   = Join-Path $repo "docs"
 $tmpl   = Join-Path $repo "templates"
 
-# ---- 客户端注册表（单一事实来源镜像自 clients/registry.md）----
+# ---- 客户端映射表（本表即运行时事实来源；说明与扩展见 README「维护者参考」）----
 $Clients = @{
   claude   = @{ Profile='native';    Entry='CLAUDE.md'; CmdDir='.claude/commands'; CmdFlatten=$false; RulesDir='.claude/rules/common'; SkillsDir='.claude/skills' }
   opencode = @{ Profile='agents-md'; Entry='AGENTS.md'; CmdDir='.opencode/command'; CmdFlatten=$true;  RulesDir='';                    SkillsDir='' }

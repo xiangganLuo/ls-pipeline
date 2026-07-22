@@ -3,7 +3,7 @@
 # 用法：
 #   ./install.sh <target-project-dir> [--client <name>] [--force]
 #   client ∈ claude | codex | opencode | trae | qoder | grok（缺省交互选择）
-# 两种 profile 见 clients/registry.md：native(claude) / agents-md(其余)。
+# 两种 profile（详见 README「维护者参考」）：native(claude) / agents-md(其余)。
 # 工具链配置 seed 到项目根 ls-pipeline.config.md（不覆盖已存在）。
 set -euo pipefail
 
@@ -36,7 +36,7 @@ if [[ -z "$CLIENT" ]]; then
   else CLIENT="${ORDER[$((sel-1))]:-}"; [[ -z "$CLIENT" ]] && { echo "无效选择: $sel" >&2; exit 1; }; fi
 fi
 
-# ---- 客户端注册表（镜像 clients/registry.md）----
+# ---- 客户端映射表（本表即运行时事实来源；说明与扩展见 README「维护者参考」）----
 # 字段: profile|entry|cmddir|cmdflatten|rulesdir
 case "$CLIENT" in
   claude)   PROFILE=native;    ENTRY=CLAUDE.md; CMDDIR=".claude/commands"; CMDFLATTEN=0; RULESDIR=".claude/rules/common"; SKILLSDIR=".claude/skills";;

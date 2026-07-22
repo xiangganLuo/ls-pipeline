@@ -1,4 +1,5 @@
 <!-- ls-pipeline:begin (由 ls-pipeline 安装器维护；勿手改本区块内标记) -->
+
 # AI 开发流水线（ls-pipeline）
 
 本项目采用**半自动 AI 循环开发流水线**。任何"写代码实现需求/特性/修复"的任务，**MUST** 走此流程，不得跳阶段、不得越人工门、不得替用户拍板。
@@ -14,7 +15,7 @@
 │  编码⇄单测 → code   （内环：逐 task TDD，config 的 build/unit-test 绿）│
 │  集成测试  → itest  （集成/E2E；失败回喂 code；连续 3 轮无进展升级人工）│
 └──────────────────────────────────────────────┘
-⏸ 归档       → archive   （openspec 同步主 spec + 移 changes/archive/）
+⏸ 归档       → archive   （openspec 同步
 ```
 
 **三道人工门（MUST 真正停下等确认）**：① 需求澄清确认　② spec 审批　③ 归档确认。
@@ -46,4 +47,5 @@
 - 前置：`openspec` CLI（`npm i -g openspec` + 项目根 `openspec init`）。
 
 完整指南见 `.ai/ls-pipeline/docs/ai-dev-pipeline.md`（若安装器复制了 docs）或本模板仓库。
+
 <!-- ls-pipeline:end -->

@@ -213,7 +213,3 @@ macOS / Linux / bash：
 2. agents-md 客户端**通常无需改脚本逻辑**（默认即 AGENTS.md + 通用 bundle）；只有要"原生 bonus 目录"时才填 `CmdDir`/`RulesDir`。
 3. 更新上面「完整映射」表与「支持的客户端」表。
 4. 在真实项目跑一次安装 + `/ls:status` 冒烟，把验证状态从"尽力而为"升级。
-
-## 许可
-
-MIT

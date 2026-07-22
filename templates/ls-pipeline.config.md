@@ -18,6 +18,7 @@
 
 - **unit-test（整体）**: `<跑一个模块/包全部单测的命令，例如：mvn -pl <module> -am test / npm test / pytest>`
 - **single-test（单文件/单类模板）**: `<只跑一个测试文件/类的命令模板，例如：mvn -pl <module> -am test "-Dtest=<Class>" / npx vitest run <file> / pytest <path>::<Test>>`
+- **full-test（组边界回归，可选）**: `<每组 task 完成后跑的回归命令，通常=受影响模块/包的整体单测；缺省回退 unit-test。例如：mvn -pl <module> -am test / pnpm test / pytest>`
 
 ## 覆盖率
 
